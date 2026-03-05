@@ -88,6 +88,7 @@ def detect_place():
         # Format results
         results = {
             'success': True,
+            'image_url': f'/uploads/{unique_filename}',
             'results': {
                 'primary_place': predictions[0][1] if predictions else None,
                 'primary_confidence': predictions[0][0] if predictions else 0,
@@ -101,12 +102,7 @@ def detect_place():
             }
         }
         
-        # Clean up - delete the uploaded file
-        try:
-            os.remove(filepath)
-        except:
-            pass  # Ignore cleanup errors
-        
+        # Keep the uploaded file so it can be displayed in the browser
         return jsonify(results)
         
     except Exception as e:

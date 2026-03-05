@@ -254,7 +254,7 @@
                 analyzeBtn.disabled = false;
 
                 if (data.success && data.results) {
-                    displayResults(data.results);
+                    displayResults(data.results, data.image_url);
                 } else {
                     showError(data.error || 'Failed to analyze image');
                 }
@@ -266,11 +266,22 @@
             });
         }
 
-        function displayResults(data) {
+        function displayResults(data, imageUrl) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
             
-            let html = `
+            let html = '';
+            
+            if (imageUrl) {
+                html += `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3>📷 Uploaded Image</h3>
+                        <img src="${imageUrl}" alt="Uploaded image" style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                    </div>
+                `;
+            }
+            
+            html += `
                 <h3>🎯 Detection Results</h3>
                 <p><strong>Top Background Places Detected:</strong></p>
             `;
