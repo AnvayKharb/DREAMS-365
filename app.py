@@ -6,6 +6,7 @@ Serves web interface and API endpoints for image upload and analysis
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 from background_place_detector import BackgroundPlaceDetector
+from dreamsApp.app.utils.memory_analyser import analyse_memory
 import os
 import uuid
 
@@ -75,31 +76,43 @@ def detect_place():
                 pass
             return jsonify({'success': False, 'error': 'Invalid image file. Please upload a real image (JPG, PNG, etc).'}), 400
         
-        # Analyze the image
-        predictions = detector.predict_place(filepath, top_k=5)
-        
-        if not predictions:
-            try:
-                os.remove(filepath)
-            except:
-                pass
-            return jsonify({'success': False, 'error': 'Failed to analyze image. The model could not process this file.'}), 500
-        
-        # Format results
+        # Analyze with unified scene + emotion pipeline
+        analysis = analyse_memory(filepath)
+        scene = analysis.get('scene', {})
+        emotion = analysis.get('emotion', {})
+
+        top_places = [
+            {
+                'name': p.get('label', 'unknown'),
+                'confidence': float(p.get('confidence', 0.0))
+            }
+            for p in scene.get('scene_raw_top3', [])
+        ]
+        expected_location = top_places[0]['name'] if top_places else 'unknown'
+        expected_location_confidence = top_places[0]['confidence'] if top_places else 0.0
+
+        # Format results for frontend compatibility + emotion output
+        emotion_payload = {
+            'dominant_emotion': emotion.get('dominant_emotion', 'unknown'),
+            'happy': float(emotion.get('happy', 0.0) or 0.0),
+            'sad': float(emotion.get('sad', 0.0) or 0.0),
+            'neutral': float(emotion.get('neutral', 0.0) or 0.0),
+        }
+        emotion_detected = emotion_payload['dominant_emotion'] != 'unknown'
+
         results = {
             'success': True,
             'image_url': f'/uploads/{unique_filename}',
             'results': {
-                'primary_place': predictions[0][1] if predictions else None,
-                'primary_confidence': predictions[0][0] if predictions else 0,
-                'top_places': [
-                    {
-                        'name': place,
-                        'confidence': float(prob)
-                    }
-                    for prob, place in predictions
-                ]
-            }
+                'primary_place': scene.get('scene_type', 'unknown'),
+                'primary_confidence': float(scene.get('scene_confidence', 0.0) or 0.0),
+                'expected_location': expected_location,
+                'expected_location_confidence': float(expected_location_confidence),
+                'top_places': top_places,
+                'emotion': emotion_payload,
+                'emotion_status': 'detected' if emotion_detected else 'no_face_detected',
+                'combined_insight': analysis.get('combined_insight', '')
+            },
         }
         
         # Keep the uploaded file so it can be displayed in the browser

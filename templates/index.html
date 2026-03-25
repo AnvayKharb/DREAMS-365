@@ -135,6 +135,34 @@
             margin: 5px 0;
             color: #555;
         }
+        .emotion-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+        .emotion-label {
+            width: 90px;
+            font-weight: 600;
+            color: #333;
+        }
+        .emotion-track {
+            flex: 1;
+            height: 10px;
+            border-radius: 8px;
+            background: #e6e6e6;
+            overflow: hidden;
+        }
+        .emotion-fill {
+            height: 100%;
+            border-radius: 8px;
+        }
+        .emotion-value {
+            width: 52px;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -303,10 +331,58 @@
                 });
             }
             
+            if (data.expected_location) {
+                const expectedLocationLabel = data.expected_location.replace(/_/g, ' ').replace(/\//g, ' - ');
+                const expectedLocationConfidence = Math.round((data.expected_location_confidence || 0) * 100);
+                html += `
+                    <div style="margin-top: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 5px;">
+                        <h4>Expected Location is: ${expectedLocationLabel} (${expectedLocationConfidence}%)</h4>
+                    </div>
+                `;
+            }
+
             if (data.primary_place) {
                 html += `
                     <div style="margin-top: 20px; padding: 15px; background-color: #d5f4e6; border-radius: 5px;">
                         <h4>Primary Background: ${data.primary_place.replace(/_/g, ' ').replace(/\//g, ' - ')}</h4>
+                    </div>
+                `;
+            }
+
+            if (data.emotion) {
+                const emotion = data.emotion;
+                const happyPct = Math.round((emotion.happy || 0) * 100);
+                const sadPct = Math.round((emotion.sad || 0) * 100);
+                const neutralPct = Math.round((emotion.neutral || 0) * 100);
+                const noFace = (data.emotion_status === 'no_face_detected') || ((emotion.dominant_emotion || 'unknown') === 'unknown');
+                html += `
+                    <div style="margin-top: 20px; padding: 15px; background-color: #eef6ff; border-radius: 5px;">
+                        <h3>Emotion Analysis (FER2013)</h3>
+                        <p><strong>Dominant Emotion:</strong> ${(emotion.dominant_emotion || 'unknown')}</p>
+                        ${noFace ? '<p style="color:#8a6d3b; margin:8px 0 14px;">No clear face detected. Try a closer, front-facing photo for better emotion analysis.</p>' : ''}
+                        <div class="emotion-row">
+                            <div class="emotion-label">Happy</div>
+                            <div class="emotion-track"><div class="emotion-fill" style="width:${happyPct}%; background:#2e7d32;"></div></div>
+                            <div class="emotion-value">${happyPct}%</div>
+                        </div>
+                        <div class="emotion-row">
+                            <div class="emotion-label">Sad</div>
+                            <div class="emotion-track"><div class="emotion-fill" style="width:${sadPct}%; background:#c62828;"></div></div>
+                            <div class="emotion-value">${sadPct}%</div>
+                        </div>
+                        <div class="emotion-row">
+                            <div class="emotion-label">Neutral</div>
+                            <div class="emotion-track"><div class="emotion-fill" style="width:${neutralPct}%; background:#1565c0;"></div></div>
+                            <div class="emotion-value">${neutralPct}%</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (data.combined_insight) {
+                html += `
+                    <div style="margin-top: 15px; padding: 12px; background-color: #f7f9fc; border: 1px solid #dce4ef; border-radius: 5px;">
+                        <strong>Combined Insight:</strong> ${data.combined_insight}
                     </div>
                 `;
             }
