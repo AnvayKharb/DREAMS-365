@@ -1,7 +1,11 @@
 venv/
+.venv/
+.venv311/
 __pycache__/
 *.pyc
 .DS_Store
 uploads/
 DREAMS-365/
 *.pth.tar
+.pytest_cache/
+result/
