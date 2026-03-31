@@ -1,14 +1,14 @@
 
-# 🎯 Background Scene Classifier (DREAMS Prototype)
+#  Background Scene Classifier (DREAMS Prototype)
 
 A **local prototype implementation** of background scene classification using the Places365 model, built to validate environment understanding for the DREAMS pipeline.
 
-> ⚠️ This is an experimental setup created to evaluate accuracy and feasibility.
+>  This is an experimental setup created to evaluate accuracy and feasibility.
 > Integration into the main DREAMS system will be done during the GSoC coding period.
 
 ---
 
-## 🚀 Purpose
+##  Purpose
 
 This module was developed to answer a critical question for DREAMS:
 
@@ -21,7 +21,7 @@ This module was developed to answer a critical question for DREAMS:
 
 ---
 
-## ⚙️ Local Setup (Prototype)
+##  Local Setup (Prototype)
 
 ### 1. Install Dependencies
 
@@ -52,7 +52,7 @@ Server runs on:
 
 ---
 
-## 🧠 What It Does
+##  What It Does
 
 * Classifies images into **365 scene categories** (Places365)
 * Returns top predictions with confidence scores
@@ -64,7 +64,7 @@ Server runs on:
 
 ---
 
-## 🔧 Technical Stack
+##  Technical Stack
 
 * **Backend:** Flask
 * **Model:** Places365 (ResNet18)
@@ -73,7 +73,7 @@ Server runs on:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ├── app.py
@@ -87,7 +87,7 @@ Server runs on:
 
 ---
 
-## 🌐 API
+##  API
 
 ### POST `/api/detect`
 
@@ -99,7 +99,7 @@ curl -X POST -F "file=@image.jpg" http://localhost:3000/api/detect
 
 ---
 
-## 📊 Observations (Local Validation)
+##  Observations (Local Validation)
 
 * Strong performance on:
 
@@ -110,7 +110,7 @@ curl -X POST -F "file=@image.jpg" http://localhost:3000/api/detect
 
 ---
 
-## 🔗 Relation to DREAMS
+## Relation to DREAMS
 
 This prototype directly maps to **Phase 1: Scene Classification Backbone** in the DREAMS proposal.
 
@@ -124,7 +124,7 @@ This prototype directly maps to **Phase 1: Scene Classification Backbone** in th
 
 ---
 
-## ⚠️ Current Scope
+##  Current Scope
 
 * Local prototype only
 * Not yet integrated into DREAMS backend
@@ -133,7 +133,7 @@ This prototype directly maps to **Phase 1: Scene Classification Backbone** in th
 
 ---
 
-## 📌 Note
+##  Note
 
 This implementation was created purely for **validation purposes**.
 It confirms that scene classification is **feasible, reliable, and ready for integration**.
@@ -142,7 +142,7 @@ Full integration, optimization, and pipeline alignment will be completed during 
 
 ---
 
-## 🛑 Stop Server
+##  Stop Server
 
 ```bash
 Ctrl + C
